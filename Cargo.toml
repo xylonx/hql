@@ -1,0 +1,9 @@
+[workspace]
+resolver = "2"
+
+members = ["hql", "hql-cli"]
+
+[profile.profiling]
+inherits = "release"
+debug = true
+lto = true

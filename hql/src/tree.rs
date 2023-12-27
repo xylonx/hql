@@ -249,6 +249,10 @@ impl<T: Debug + Display> Tree<T> {
             };
         }
 
+        // clear children of old node
+        let old_parent = self.node_mut_ref(node).unwrap();
+        old_parent.children = None;
+
         self.node_ref(new_parent)
     }
 

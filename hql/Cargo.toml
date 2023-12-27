@@ -1,0 +1,25 @@
+[package]
+name = "hql"
+version = "0.1.0"
+edition = "2021"
+
+description = "A human-friendly Html Query Language"
+keywords = ["html", "selector"]
+
+authors = ["Xylon Xiang <xylonx@xylonx.com>"]
+license = "MIT"
+
+repository = "https://github.com/xylonx/hql"
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+enum_dispatch = "0.3.12"
+html5ever = "0.26.0"
+pest = "2.7.5"
+pest_derive = "2.7.5"
+tracing = "0.1.40"
+
+[dev-dependencies]
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }

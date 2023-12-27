@@ -1,0 +1,57 @@
+WHITESPACE = _{ " " | "\n" | "\t" | "\r" }
+
+tag              = @{ (ASCII_ALPHA | "-" | "_")+ }
+singlePath       = @{ "/" }
+travelPath       = @{ "//" }
+path             = ${ (travelPath | singlePath) ~ tag }
+uniText          = @{ LETTER+ }
+posNumber        = @{ ASCII_DIGIT+ }
+negNumber        = @{ "-" ~ posNumber }
+number           = ${ posNumber | negNumber }
+attrField        = @{ (ASCII_ALPHANUMERIC | "-" | "_")+ }
+caseSensitiveOpt = @{ "0" | "1" }
+
+quotedPath      = ${ "`" ~ path+ ~ "`" }
+quotedAttrField = ${ "`" ~ attrField ~ "`" }
+quotedUniText   = ${ "`" ~ uniText ~ "`" }
+
+// Flat the whole sub-tree
+flatExpr = { "@flat()" }
+// Each path is a pair of slashes and tag. Single slash `/` means only selecting children while Travel slash `//` means selecting the whole subtree.
+pathExpr = { "@path(" ~ quotedPath ~ ")" }
+// It receives one or two paremeters, attribute name and potential attribute value. If attribute value is absent, it means checking whether attribute name exists
+attrExpr = { "@attr(" ~ quotedAttrField ~ ("," ~ quotedAttrField)? ~ ")" }
+// It receives id need to be searched and an optional flag: caseSensitive, with true as default.
+idExpr = { "@id(" ~ quotedAttrField ~ ("," ~ caseSensitiveOpt)? ~ ")" }
+// Basically same as idExpr
+classExpr = { "@class(" ~ quotedAttrField ~ ("," ~ caseSensitiveOpt)? ~ ")" }
+childExpr = { "@child(" ~ number ~ ")" }
+
+// Get Text. If the receiving node is a element, it will travese the whole subtree and concate all its text sub-elements
+textExpr = { "#text()" }
+// Trim leading and tailing spaces. It will only precess Text node and passthrough Element nodes.
+trimExpr        = { "#trim()" }
+trimPrefixExpr  = { "#trimPrefix(" ~ quotedUniText ~ ")" }
+trimSuffixExpr  = { "#trimSuffix(" ~ quotedUniText ~ ")" }
+extractAttrExpr = { "#attr(" ~ quotedAttrField ~ ")" }
+
+mapExpr = _{
+    childExpr
+  | flatExpr
+  | pathExpr
+  | attrExpr
+  | idExpr
+  | classExpr
+}
+
+extractExpr = _{
+    textExpr
+  | trimExpr
+  | trimPrefixExpr
+  | trimSuffixExpr
+  | extractAttrExpr
+}
+
+expr = _{ mapExpr | extractExpr }
+stmt = _{ expr }
+hql  = _{ SOI ~ stmt ~ ("|" ~ stmt)* ~ EOI }

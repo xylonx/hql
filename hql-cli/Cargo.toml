@@ -1,0 +1,22 @@
+[package]
+name = "hql-cli"
+version = "0.1.0"
+edition = "2021"
+
+description = "The Cli of Html Query Language"
+keywords = ["html", "selector", "cli"]
+
+authors = ["Xylon Xiang <xylonx@xylonx.com>"]
+license = "MIT"
+
+repository = "https://github.com/xylonx/hql"
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "hql"
+
+[dependencies]
+clap = { version = "4.4.11", features = ["derive"] }
+hql = { version = "0.1.0", path = "../hql" }
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
